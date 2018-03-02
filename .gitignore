@@ -1,0 +1,7 @@
+*.swp
+*.o
+*.pyc
+*.exe
+MCsimulations_DB/*
+temp/*
+Modules/*
