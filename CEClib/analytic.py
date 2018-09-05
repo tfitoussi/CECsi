@@ -3,6 +3,10 @@ from numpy import select, exp, log10
 from numpy import pi, sqrt, interp, dtype, zeros, size
 from scipy.integrate import quad, fixed_quad
 from CEClib.constants import *
+from os import path
+
+pathname = path.dirname(__file__)        
+CEClib_PATH = path.abspath(pathname)
 
 # Value for analytic expression
 Ee_default=1e3 #GeV
@@ -109,7 +113,7 @@ def Ethreshold_gg(epsilon=Eebl):
 def lambda_gg(Egamma=1e3,z=0): # Egamma (GeV)
    # Bilinear interpolation 
    z_tab = [0,0.03,0.1,0.5,1,2,3]
-   E_tab = loadtxt("CEClib/lambda_e.dat",unpack=True,usecols=[0])*me*1e-6
+   E_tab = loadtxt(CEClib_PATH+"/lambda_e.dat",unpack=True,usecols=[0])*me*1e-6
    i2 = searchsorted(z_tab,z)
    if z<=0:
       fy=1
@@ -124,7 +128,7 @@ def lambda_gg(Egamma=1e3,z=0): # Egamma (GeV)
    j2 = searchsorted(E_tab,Egamma)
    j1 = j2-1
    fx=(Egamma-E_tab[j1])/(E_tab[j2]-E_tab[j1])
-   lambda_e = loadtxt("CEClib/lambda_e.dat",unpack=True,usecols=[i1+1,i2+1,i1+7,i2+7])
+   lambda_e = loadtxt(CEClib_PATH+"/lambda_e.dat",unpack=True,usecols=[i1+1,i2+1,i1+7,i2+7])
    lambda11 = lambda_e[0,j1]*((1-fx)*(1-fy))
    lambda12 = lambda_e[1,j1]*((1-fx)*fy)
    lambda21 = lambda_e[0,j2]*(fx*(1-fy))
@@ -167,7 +171,7 @@ def distance(z=0.,Nquad=30):
    return distco, distpr
 
 def Ecut(z=0.14): # TeV
-   zi,ctgg,best_fit,dominguez,finke,franceschini,gilmore,lower_limit = loadtxt("CEClib/Ecut.dat",unpack=True,usecols=[0,1,2,3,4,5,6,7]) 
+   zi,ctgg,best_fit,dominguez,finke,franceschini,gilmore,lower_limit = loadtxt(CEClib_PATH+"/Ecut.dat",unpack=True,usecols=[0,1,2,3,4,5,6,7]) 
    return interp(z,zi,best_fit),interp(z,zi,dominguez),interp(z,zi,finke),interp(z,zi,franceschini),interp(z,zi,gilmore),interp(z,zi,lower_limit)
 
 def Etarget(Egamma=1): # Egamma en TeV, Etarget en eV

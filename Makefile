@@ -27,6 +27,3 @@ clean:
 
 cleanall:
 	rm -f $(OBJ) Modules/*
-
-makedir:
-	mkdir -p "temp" "Modules" "MCsimulations_DB"

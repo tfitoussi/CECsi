@@ -28,10 +28,46 @@ Summary:
 
 ## First use
 
-Before launching any simulations, do the following steps:
+### Installation in python Virtualenv (Recommended)
 
-1. `make makedir` (generate needed directories)
-2. `make` (to check that the MC simulation code is successfully compiled)
+1. Create the virtualenv
+
+   export CECSI_DIR=$HOME"/.virtualenvs/CECsi"
+
+   mkdir -p $CECSI_DIR
+
+   virtualenv $CECSI_DIR
+
+2. Activate the virtualenv
+
+   source $CECSI_DIR"/bin/activate"
+
+3. add the alias to your `.bashrc`: add this two lines in your `.bashrc` file to launch the virtualenv with the command `cecsi`
+
+   export CECSI_DIR=$HOME"/.virtualenvs/CECsi"
+   alias cecsi="source $CECSI_DIR'/bin/activate'"
+
+4. Download and install the code
+
+   cd $CECSI_DIR
+
+   git clone git@gitlab.com:tfitoussi/CECsi.git
+
+5. Add CECsi path to the virtualenv python path
+
+   cd CECsi
+
+	pwd > ../lib/python2.7/site-packages/CECsi.pth 
+
+### Before launching any simulations (with or without virtualenv)
+
+6. `Create needed directories
+
+   mkdir -p "temp" "Modules" "MCsimulations_DB"
+
+7.  Check that the MC simulation code is successfully compiled
+
+   make
 
 
 ## Using CECsi code
