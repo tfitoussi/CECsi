@@ -1,4 +1,4 @@
-#include "../preprocessing.f95"
+#include "../temp/preprocessing.f95"
 
 module test
 use constantes, only: prec
@@ -10,7 +10,7 @@ end module test
 !===============================================================================
                                PROGRAM CASCADE
 !===============================================================================
-use Constantes, only : prec, OMP_num_threads, iseed, currentEnergy, currentRedshift , Mpc
+use Constantes, only : prec, OMP_num_threads, iseed, seed, currentEnergy, currentRedshift , Mpc
 use EGMF, only : intEGMF, lambdaEGMF, Nm, selectEGMF, initiateEGMF
 #if defined B_turbulent
 use EGMF, only : EGMFtab, init_B
@@ -29,9 +29,9 @@ external ran0
 
 call initiate()
 zmax=4
-open (unit=117,file="output/lambda_gg.dat")
-open (unit=118,file="output/Eebl.dat")
-open (unit=119,file="output/dtaudx.dat")
+open (unit=117,file="temp/lambda_gg.dat")
+!open (unit=118,file="temp/Eebl.dat")
+!open (unit=119,file="temp/dtaudx.dat")
 !$OMP PARALLEL do SCHEDULE(DYNAMIC) NUM_THreadS(OMP_num_threads)
 do i=1, nmax
    iseed = -i*316518 ! initiate the seed generator (reproductibility)
@@ -42,8 +42,8 @@ do i=1, nmax
 end do
 !$OMP end PARALLEL do
 close(117)
-close(118)
-close(119)
+!close(118)
+!close(119)
 call finish()
 
 !===============================================================================
@@ -57,7 +57,8 @@ subroutine gamma_absorption(i)
    type (particle) :: part, part_modify
    integer, intent(in) :: i
    real(prec) :: Esave, tau, redzmin, redzmax, disttosource, zint, zlim, norma
-   real(prec) :: dist, aa, bb, comp, deltaz, dtaudx, zfinal, zearth=0, Emin, Eebl
+   real(prec) :: dist, aa, bb, comp, deltaz, dtaudx, zfinal, zearth=0, Emin, Eebl 
+   real(prec) :: dtaudxCMB, dtaudxEBL, integranddtaudxPPCMB, integranddtaudxPPEBL
    real(prec) :: qgauss, qgauss1, integranddtaudxPP, integrandTauPP, integrandt
    external qgauss, qgauss1, integranddtaudxPP, integrandTauPP, integrandt
 
@@ -98,25 +99,26 @@ subroutine gamma_absorption(i)
       Zfinal = zint
    end if
 
+
    dist = abs((c/H0)*qgauss(integrandt, zfinal, currentRedshift))
 
-   Emin = 1 / currentenergy
-   Eebl = 0
-   ! Select target photon: must have an energy higher than the threshold
-   ! previously computed
-   do while (Eebl < Emin)
-      call selecPhotEBL(Eebl,currentRedshift)
-   end do
+   !Emin = 1 / currentenergy
+   !Eebl = 0
+   !! Select target photon: must have an energy higher than the threshold
+   !! previously computed
+   !do while (Eebl < Emin)
+   !   call selecPhotEBL(Eebl,currentRedshift)
+   !end do
 
-   tau = qgauss(integrandTauPP, z0, zf)*Norma*(c/H0)
-   dtaudx=qgauss1(integranddtaudxPP, aa, bb, part%redshift)/part%energy**2 * Norma
-   dtaudxCMB=qgauss1(integranddtaudxPPCMB, aa, bb, part%redshift)/part%energy**2 * Norma
-   dtaudxEBL=qgauss1(integranddtaudxPPEBL, aa, bb, part%redshift)/part%energy**2 * Norma
+   !tau = qgauss(integrandTauPP, zearth, zfinal)*Norma*(c/H0)
+   !dtaudx=qgauss1(integranddtaudxPP, aa, bb, part%redshift)/part%energy**2 * Norma
+   !dtaudxCMB=qgauss1(integranddtaudxPPCMB, aa, bb, part%redshift)/part%energy**2 * Norma
+   !dtaudxEBL=qgauss1(integranddtaudxPPEBL, aa, bb, part%redshift)/part%energy**2 * Norma
 
    !$OMP CRITICAL (nbphotons)
    write(unit=117,fmt=*) currentenergy*510.998918*1d-9, dist/Mpc
-   write(unit=118,fmt=*) currentenergy*510.998918*1d-9, Eebl*510.998918*1d3
-   write(unit=119,fmt=*) currentenergy*510.998918*1d-9, dtaudx, dtaudxEBL, dtaudxCMB, tau
+   !write(unit=118,fmt=*) currentenergy*510.998918*1d-9, Eebl*510.998918*1d3
+   !write(unit=119,fmt=*) currentenergy*510.998918*1d-9, dtaudx, dtaudxEBL, dtaudxCMB, tau
    nbphot=nbphot+1
    !$OMP end CRITICAL (nbphotons)
 end subroutine gamma_absorption
@@ -156,8 +158,8 @@ subroutine initiate()
    !=============================
    namelist /source/ emission_redshift,Emin_source,Emax_source, Nature_source, nmax
    namelist /EGMF_param/ IntEGMF, lambdaEGMF, Nm
-   namelist /simulation/ OMP_num_threads, alphaS, Ethreshold, ComptonThreshold
-   open(unit=10, file="input_parameters.f95")
+   namelist /simulation/ OMP_num_threads, alphaS, Ethreshold, ComptonThreshold, seed
+   open(unit=10, file="temp/input_parameters.f95")
    read(10, nml=source)
    read(10, nml=EGMF_param)
    read(10, nml=simulation)
@@ -204,9 +206,9 @@ subroutine initiate()
    !$ write(*,'(a,i4,a)') "  > On ", OMP_num_threads, " threads"
 
    ! File which contains all the particles "detected"
-   open (unit=ResultID,file="output/results.dat")
-   open (unit=errorID,file="output/Compton_Errors.dat")
-   open (unit=deltaID,file="output/lepton_deflection.dat")
+   open (unit=ResultID,file="temp/results.dat")
+   open (unit=errorID,file="temp/Compton_Errors.dat")
+   open (unit=deltaID,file="temp/lepton_deflection.dat")
 
    call itime(current_time)
    write(*,*) "CPU time ========================================================="
@@ -237,7 +239,7 @@ subroutine finish()
    close(errorID)
    close(deltaID)
 
-   open (unit=111,file="output/profile.dat")
+   open (unit=111,file="temp/profile.dat")
    write(unit=111,fmt=*) IntEGMF, Emax_source*(510998.918d-12), distSourceToEarth/Mpc, &
       emission_redshift, nmax, nbLeptonsProd
    close(111)
