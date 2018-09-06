@@ -5,6 +5,13 @@ from scipy.integrate import quad, fixed_quad
 from CEClib.constants import *
 from os import path
 
+import matplotlib.pyplot as plt
+from matplotlib import rcParams
+label_size = 20
+rcParams['xtick.labelsize'] = label_size 
+rcParams['ytick.labelsize'] = label_size 
+rcParams['ps.fonttype'] = 42
+
 pathname = path.dirname(__file__)        
 CEClib_PATH = path.abspath(pathname)
 
@@ -82,6 +89,25 @@ def tIC():
 def RL(Ee=Ee_default,B=B_default,z=0):
    return (Ee*GeV)/(e*B) /(1+z) /Mpc #Mpc
 
+# Cosmologique distance
+def properIntegrand(z):
+   return -c/(H0*(1+z)*sqrt(omegaM*(1+z)**3+omegaK*(1+z)**2+omegaL))
+
+def comobileIntegrand(z):
+   return -c/(H0*sqrt(omegaM*(1+z)**3+omegaK*(1+z)**2+omegaL))
+
+def distance(z=0.,Nquad=30):
+   if type(z) == dtype(float): 
+      distpr =  fixed_quad(properIntegrand,z,0,n=Nquad)[0]/Mpc
+      distco =  fixed_quad(comobileIntegrand,z,0,n=Nquad)[0]/Mpc
+   else:
+      distpr = zeros(size(z))
+      distco = zeros(size(z))
+      for i in range(size(z)): 
+         distpr[i] =  fixed_quad(properIntegrand,z[i],0,n=Nquad)[0]/Mpc
+         distco[i] =  fixed_quad(comobileIntegrand,z[i],0,n=Nquad)[0]/Mpc
+   return distco, distpr
+
 # Magnetic deflection
 def delta(Ee=Ee_default,B=B_default,lambda_B=lambda_B_default,z=0):
    Ee=array(Ee)
@@ -110,10 +136,42 @@ def Ethreshold_ic(Ee=Ee_default,B=B_default):
 def Ethreshold_gg(epsilon=Eebl):
    return (me)**2/epsilon *1e-3 #GeV
 
-def lambda_gg(Egamma=1e3,z=0): # Egamma (GeV)
-   # Bilinear interpolation 
-   z_tab = [0,0.03,0.1,0.5,1,2,3]
-   E_tab = loadtxt(CEClib_PATH+"/lambda_e.dat",unpack=True,usecols=[0])*me*1e-6
+# Pair production absorption
+def plot_lambda_gg(save_fig=""):
+   '''
+      Plot curves of the mean distance of absorption ( of photon through pair 
+      production over CMB and EBL (Dominguez 2011) photons
+      optional: save_fig = path where to save figure and name of the figure + extension
+   '''
+   fig1 = plt.figure(figsize=(12,9))
+   ax11 = fig1.add_subplot(111)
+   labels=["0","0.05","0.1","0.5","1","2","3"]
+   for lab in labels:
+      e,f=loadtxt(CEClib_PATH+"/data/lambda_gg_z_"+lab+".dat",unpack=True,usecols=[0,1])
+      ax11.plot(log10(e*1e12),f*1e3,"-",linewidth=2,label="z = "+lab) 
+
+   ax11.legend(loc="best",fontsize="xx-large")
+   ax11.grid(b=True,which='major')
+   ax11.set_ylim([1e-1,1e7])
+   ax11.set_xlim([11,18])
+   #ax11.set_xscale('log')
+   ax11.set_yscale('log')
+   ax11.set_xlabel("$log_{10}$( energy [eV] )",fontsize="xx-large")
+   ax11.set_ylabel("$\lambda_{\gamma\gamma}$ [kpc]",fontsize="xx-large")
+
+   plt.show()
+
+   if save_fig != "":
+      plt.savefig(save_fig,bbox_inches='tight') 
+
+def lambda_gg(Egamma=100,z=0.): 
+   '''
+      Compute the mean distance of absorption
+      Egamma = Energy [TeV]
+      z = redshift
+   ''' 
+   z_tab = [0,0.05,0.1,0.5,1,2,3]
+   E_tab = loadtxt(CEClib_PATH+"/data/lambda_gg_z_0.dat",unpack=True,usecols=[0])
    i2 = searchsorted(z_tab,z)
    if z<=0:
       fy=1
@@ -128,50 +186,29 @@ def lambda_gg(Egamma=1e3,z=0): # Egamma (GeV)
    j2 = searchsorted(E_tab,Egamma)
    j1 = j2-1
    fx=(Egamma-E_tab[j1])/(E_tab[j2]-E_tab[j1])
-   lambda_e = loadtxt(CEClib_PATH+"/lambda_e.dat",unpack=True,usecols=[i1+1,i2+1,i1+7,i2+7])
-   lambda11 = lambda_e[0,j1]*((1-fx)*(1-fy))
-   lambda12 = lambda_e[1,j1]*((1-fx)*fy)
-   lambda21 = lambda_e[0,j2]*(fx*(1-fy))
-   lambda22 = lambda_e[1,j2]*(fx*fy)
-   lambda_proper = lambda11 + lambda12 + lambda21 + lambda22
-   lambda11 = lambda_e[2,j1]*((1-fx)*(1-fy))
-   lambda12 = lambda_e[3,j1]*((1-fx)*fy)
-   lambda21 = lambda_e[2,j2]*(fx*(1-fy))
-   lambda22 = lambda_e[3,j2]*(fx*fy)
-   lambda_comobile = lambda11 + lambda12 + lambda21 + lambda22
-   return lambda_proper, lambda_comobile, 800.e3/Egamma #Mpc (from Durrer and Neronov 2013)
+   lgg_min = loadtxt(CEClib_PATH+"/data/lambda_gg_z_%s.dat"%str(z_tab[i1]),unpack=True,usecols=[1])
+   lgg_max = loadtxt(CEClib_PATH+"/data/lambda_gg_z_%s.dat"%str(z_tab[i2]),unpack=True,usecols=[1])
+   lgg11 = lgg_min[j1]*((1-fx)*(1-fy))
+   lgg12 = lgg_max[j1]*((1-fx)*fy)
+   lgg21 = lgg_min[j2]*(fx*(1-fy))
+   lgg22 = lgg_max[j2]*(fx*fy)
+   lgg = lgg11 + lgg12 + lgg21 + lgg22
+   return lgg
 
-def comobileTime(z):
-   return -1/(H0*(1+z)*sqrt(omegaM*(1+z)**3+omegaK*(1+z)**2+omegaL))
-
-def distPhoton(z):
-   return -c/(H0*a0*sqrt(omegaM*(1+z)**3+omegaK*(1+z)**2+omegaL))
-
-def distLepton(z,E):
-   beta = sqrt(1-m**2*c**4/E**2)
-   return -beta*c/(H0*a0*sqrt(omegaM*(1+z)**3+omegaK*(1+z)**2+omegaL))
-
-def properIntegrand(z):
-
-   return -c/(H0*(1+z)*sqrt(omegaM*(1+z)**3+omegaK*(1+z)**2+omegaL))
-
-def comobileIntegrand(z):
-   return -c/(H0*sqrt(omegaM*(1+z)**3+omegaK*(1+z)**2+omegaL))
-
-def distance(z=0.,Nquad=30):
-   if type(z) == dtype(float): 
-      distpr =  fixed_quad(properIntegrand,z,0,n=Nquad)[0]/Mpc
-      distco =  fixed_quad(comobileIntegrand,z,0,n=Nquad)[0]/Mpc
-   else:
-      distpr = zeros(size(z))
-      distco = zeros(size(z))
-      for i in range(size(z)): 
-         distpr[i] =  fixed_quad(properIntegrand,z[i],0,n=Nquad)[0]/Mpc
-         distco[i] =  fixed_quad(comobileIntegrand,z[i],0,n=Nquad)[0]/Mpc
-   return distco, distpr
+def cascade_absorption(Es=100.,z=0.,Ngen=2):
+   '''
+       Es : primary photon energy [TeV]
+       z : source redshift
+   '''
+   print("z = %f -> Dist. = %1.1e Mpc"%(z,distance(float(z))[0]))
+   Ei = Es
+   for i in range(0,Ngen+1):
+      print("Photon gen. %d max energy = %1.1e GeV"%(i,Ei*1e3))
+      print("    => distance of absorption : %1.1e Mpc"%(lambda_gg(Ei,z)))
+      Ei = Eic(Ei/2,z)*1e3
 
 def Ecut(z=0.14): # TeV
-   zi,ctgg,best_fit,dominguez,finke,franceschini,gilmore,lower_limit = loadtxt(CEClib_PATH+"/Ecut.dat",unpack=True,usecols=[0,1,2,3,4,5,6,7]) 
+   zi,ctgg,best_fit,dominguez,finke,franceschini,gilmore,lower_limit = loadtxt(CEClib_PATH+"/data/Ecut.dat",unpack=True,usecols=[0,1,2,3,4,5,6,7]) 
    return interp(z,zi,best_fit),interp(z,zi,dominguez),interp(z,zi,finke),interp(z,zi,franceschini),interp(z,zi,gilmore),interp(z,zi,lower_limit)
 
 def Etarget(Egamma=1): # Egamma en TeV, Etarget en eV
