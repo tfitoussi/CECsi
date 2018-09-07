@@ -55,7 +55,7 @@ class CECsimulation(object):
             self.Erange = [Emin,Emax]
             self.monoE = False
        
-    def Run(self,force=False,z_0=False):
+    def Run(self,force=False,z_0=False,OMP_num_threads=5):
         '''
         Check if the simulation already exists or not.
         Run it if necessary and load data.
@@ -75,7 +75,7 @@ class CECsimulation(object):
             if not path.exists(self.path):
                 makedirs(self.path) 
             write_preprocessing_f95(self.EBL)
-            write_input_parameters_f95(self.redshift,self.Emin,self.Emax,self.Erange[0],self.EGMF_B,self.EGMF_LB,OMP_num_threads=5)
+            write_input_parameters_f95(self.redshift,self.Emin,self.Emax,self.Erange[0],self.EGMF_B,self.EGMF_LB,OMP_num_threads)
 
             subprocess.call("make")   
             subprocess.call("./CECsi.exe")   
