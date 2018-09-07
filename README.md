@@ -63,11 +63,8 @@ Summary:
 
 6. `Create needed directories
 
-   mkdir -p "temp" "Modules" "MCsimulations_DB"
+   make initiate
 
-7.  Check that the MC simulation code is successfully compiled
-
-   make
 
 
 ## Using CECsi code

@@ -10,7 +10,7 @@ from matplotlib import rcParams
 label_size = 20
 rcParams['xtick.labelsize'] = label_size 
 rcParams['ytick.labelsize'] = label_size 
-rcParams['ps.fonttype'] = 42
+#rcParams['ps.fonttype'] = 42
 
 pathname = path.dirname(__file__)        
 CEClib_PATH = path.abspath(pathname)
@@ -159,10 +159,10 @@ def plot_lambda_gg(save_fig=""):
    ax11.set_xlabel("$log_{10}$( energy [eV] )",fontsize="xx-large")
    ax11.set_ylabel("$\lambda_{\gamma\gamma}$ [kpc]",fontsize="xx-large")
 
-   plt.show()
-
    if save_fig != "":
       plt.savefig(save_fig,bbox_inches='tight') 
+
+   plt.show()
 
 def lambda_gg(Egamma=100,z=0.): 
    '''
@@ -194,18 +194,6 @@ def lambda_gg(Egamma=100,z=0.):
    lgg22 = lgg_max[j2]*(fx*fy)
    lgg = lgg11 + lgg12 + lgg21 + lgg22
    return lgg
-
-def cascade_absorption(Es=100.,z=0.,Ngen=2):
-   '''
-       Es : primary photon energy [TeV]
-       z : source redshift
-   '''
-   print("z = %f -> Dist. = %1.1e Mpc"%(z,distance(float(z))[0]))
-   Ei = Es
-   for i in range(0,Ngen+1):
-      print("Photon gen. %d max energy = %1.1e GeV"%(i,Ei*1e3))
-      print("    => distance of absorption : %1.1e Mpc"%(lambda_gg(Ei,z)))
-      Ei = Eic(Ei/2,z)*1e3
 
 def Ecut(z=0.14): # TeV
    zi,ctgg,best_fit,dominguez,finke,franceschini,gilmore,lower_limit = loadtxt(CEClib_PATH+"/data/Ecut.dat",unpack=True,usecols=[0,1,2,3,4,5,6,7]) 

@@ -9,8 +9,8 @@ OPENMP 	= -fopenmp
 DIR	= fortran_src
 SRC	= $(DIR)/constants.f95 $(DIR)/extra.f95 $(DIR)/particles.f95 $(DIR)/EGMF.f95 
 SRC  += $(DIR)/integral.f95 $(DIR)/photon.f95 $(DIR)/lepton.f95 $(DIR)/readEBL.f95 
-#SRC  += $(DIR)/cascade.f95
-SRC  += $(DIR)/test_photon_abs.f95
+SRC  += $(DIR)/cascade.f95
+#SRC  += $(DIR)/test_photon_abs.f95
 OBJ	= $(patsubst $(DIR)/%.f95,%.o,$(SRC))
 PROG	= CECsi.exe
 
@@ -27,3 +27,6 @@ clean:
 
 cleanall:
 	rm -f $(OBJ) Modules/*
+
+initiate:
+	mkdir -p "temp" "Modules" "MCsimulations_DB"
