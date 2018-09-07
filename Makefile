@@ -30,3 +30,6 @@ cleanall:
 
 initiate:
 	mkdir -p "temp" "Modules" "MCsimulations_DB"
+
+pip:
+	pip install numpy scipy astropy matplotlib ipython

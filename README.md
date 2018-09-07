@@ -59,11 +59,17 @@ Summary:
 
 	pwd > ../lib/python2.7/site-packages/CECsi.pth 
 
+6. Install python dependencies
+
+   make pip
+
 ### Before launching any simulations (with or without virtualenv)
 
-6. `Create needed directories
+7. `Create needed directories
 
    make initiate
+
+
 
 
 
