@@ -30,6 +30,10 @@ cleanall:
 
 initiate:
 	mkdir -p "temp" "Modules" "MCsimulations_DB"
+	#
+	# Congratulations! CECsi is now ready to use!
+	# There are somes examples in the 'Examples' directory which can help you to start.
+	# 
 
 pip:
 	pip install numpy scipy astropy matplotlib ipython

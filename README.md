@@ -25,10 +25,24 @@ Summary:
 
 * [`Numpy/Scipy` + `Matplotlib`](http://www.scipy.org/install.html) 
 
+* `ipython` and `astropy` are not mandatory but recommanded
 
-## First use
 
-### Installation in python Virtualenv (Recommended)
+## Installation 
+
+We strongly recommand to install CECsi in a python virtualenv. It is easier to manage and install python libraries. Moreover if you are working on a machine on which you don't have the administration right this is the easiest way.
+
+If `virtualenv` is not install it or download it:
+
+   wget https://github.com/pypa/virtualenv/archive/develop.zip
+
+   unzip develop.zip
+
+   python virtualenv-develop/virtualenv.py $CRPROPA_DIR
+
+### Setup the virtualenv
+
+If you already install (e.g.) CRPropa in a virtualenv, you can install CECsi in it to work alongside with CRPropa. But you can still install CECsi in a separate virtualenv as far as CECsi is an independant software.
 
 1. Create the virtualenv
 
@@ -42,18 +56,23 @@ Summary:
 
    source $CECSI_DIR"/bin/activate"
 
-3. add the alias to your `.bashrc`: add this two lines in your `.bashrc` file to launch the virtualenv with the command `cecsi`
+3. You may want to add the alias to your `.bashrc`: add this two lines in your `.bashrc` file to launch the virtualenv with the command `cecsi`
 
    export CECSI_DIR=$HOME"/.virtualenvs/CECsi"
+
    alias cecsi="source $CECSI_DIR'/bin/activate'"
 
-4. Download and install the code
+### Download CECsi (with or without virtualenv)
+
+4. Download the code
 
    cd $CECSI_DIR
 
    git clone git@gitlab.com:tfitoussi/CECsi.git
 
-5. Add CECsi path to the virtualenv python path
+### Finish to setup the virtualenv
+
+5. Add CECsi path to the virtualenv python path 
 
    cd CECsi
 
@@ -65,16 +84,13 @@ Summary:
 
 ### Before launching any simulations (with or without virtualenv)
 
-7. `Create needed directories
+7. Create needed directories
 
    make initiate
 
-
-
+Congratulations! CECsi is now ready to use. 
 
 
 ## Using CECsi code
 
-Some example on how-to use CECsi has been put in the Examples directory. All explanations are writen inside.
-
-
+Some example on how-to use CECsi has been put in the Examples directory. Some explanations are writen inside. If you need help, do not hesitate to contact me. 
