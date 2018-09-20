@@ -3,7 +3,7 @@
 
 This program is a Monte-Carlo simulation of electromagnetic Cosmological cascades. A cosmological cascade is a simple process. High energy photons interact with low energy photons (mostly from the extragalactic background) to produce a pair of electron and positron. Each of the leptons has an energy equivalent to half of the initial photon energy. Then the lepton could interact via inverse Compton scattering with low energy photons (mostly form the Cosmological Microwave Background). This produce a photon with a higher energy (GeV) and the lepton loose the equivalent energy. Though each particle could interact again, respectively through pair production and inverse Compton scattering, or reach the detector.
 
-**Because it appears that the simulation code is not easy to use by itself and requires to use post-treatment scripts which were stored in a different [git repository](https://gitlab.com/tfitoussi/simulation-analysis.git) has say in the [article](http://adsabs.harvard.edu/cgi-bin/basic_connect?qsearch=fitoussi+2017&version=1). In a way of simplification, everything has been merge here and an additional script has been add to help running thing out of the box.**
+** This code is an updated version of the one presented in this [article](http://adsabs.harvard.edu/cgi-bin/basic_connect?qsearch=fitoussi+2017&version=1) because it appears that the simulation code is not easy to use by itself and a lot of options have been add with time. This new version aims to be easier too used. The old code can still be found in the [old directory](https://gitlab.com/tfitoussi/cascade-simulation.git) but will most probably not be updated anymore. **
 
 ## Requirements
 
@@ -68,7 +68,7 @@ If you already install (e.g.) CRPropa in a virtualenv, you can install CECsi in 
 
    cd $CECSI_DIR
 
-   git clone https://gitlab.com/tfitoussi/CECsi.git
+   git clone https://github.com/tfitoussi/CECsi.git
 
 ### Finish to setup the virtualenv
 
