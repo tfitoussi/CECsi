@@ -12,10 +12,12 @@ rcParams['ytick.labelsize'] = label_size
 rcParams['ps.fonttype'] = 42
 
 class GraphDistribution(object):
-    def __init__(self,xlabel="",ylabel="",title=""):
+    def __init__(self,xlabel="",ylabel="",title="",xlog=True,ylog=True):
         self.ax = figure(figsize=(12,9),tight_layout=True).add_subplot(111)
-        self.ax.set_xscale('log')
-        self.ax.set_yscale('log')
+        if xlog:
+            self.ax.set_xscale('log')
+        if ylog:
+            self.ax.set_yscale('log')
         self.ax.grid(b=True,which='major')
 
         self.ax.set_xlabel(xlabel,fontsize=label_size)
