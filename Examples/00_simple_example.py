@@ -7,13 +7,13 @@
 #=========================================================================================#
 
 from CECsimulation import *
-from distribution_graph import *
+from GraphDistribution import * # Use EasyPlot -> https://gitlab.com/tfitoussi/EasyPyplot
 
 def simple_simulation(redshift,EGMF_B):
     simu = CECsimulation(redshift,EGMF_B)
-    #fig1 = distribution_graph()
-    fig2 = distribution_graph()
-    #fig3 = distribution_graph()
+    #fig1 = GraphDistribution()
+    fig2 = GraphDistribution()
+    #fig3 = GraphDistribution()
 
     # all generations
     simu.Run()
