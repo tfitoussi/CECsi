@@ -68,7 +68,7 @@ If you already install (e.g.) CRPropa in a virtualenv, you can install CECsi in 
 
    cd $CECSI_DIR
 
-   git clone https://github.com/tfitoussi/CECsi.git
+   git clone https://gitlab.com/tfitoussi/CECsi.git
 
 ### Finish to setup the virtualenv
 
