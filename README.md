@@ -21,7 +21,7 @@ Summary:
 
 * `make` (gmake is prefered)
 
-* `Python 3.5` (`Python 2.7` should work too)
+* `Python 3.5`
 
 * [`Numpy/Scipy` + `Matplotlib`](http://www.scipy.org/install.html) 
 
@@ -34,59 +34,59 @@ We strongly recommand to install CECsi in a python virtualenv. It is easier to m
 
 If `virtualenv` is not install it or download it:
 
-   wget https://github.com/pypa/virtualenv/archive/develop.zip
-
-   unzip develop.zip
-
-   python virtualenv-develop/virtualenv.py $CRPROPA_DIR
+```bash
+wget https://github.com/pypa/virtualenv/archive/develop.zip
+unzip develop.zip
+python virtualenv-develop/virtualenv.py $CRPROPA_DIR
+```
 
 ### Setup the virtualenv
 
 If you already install (e.g.) CRPropa in a virtualenv, you can install CECsi in it to work alongside with CRPropa. But you can still install CECsi in a separate virtualenv as far as CECsi is an independant software.
 
 1. Create the virtualenv
-
-   export CECSI_DIR=$HOME"/.virtualenvs/CECsi"
-
-   mkdir -p $CECSI_DIR
-
-   virtualenv $CECSI_DIR
-
+```bash
+export VENVDIR=$HOME"/.virtualenvs/venv"
+mkdir -p $VENVDIR
+virtualenv $VENVDIR
+```
 2. Activate the virtualenv
-
-   source $CECSI_DIR"/bin/activate"
-
+```bash
+source $VENVDIR"/bin/activate"
+```
 3. You may want to add the alias to your `.bashrc`: add this two lines in your `.bashrc` file to launch the virtualenv with the command `cecsi`
-
-   export CECSI_DIR=$HOME"/.virtualenvs/CECsi"
-
-   alias cecsi="source $CECSI_DIR'/bin/activate'"
+```bash
+export VENVDIR=$HOME"/.virtualenvs/venv"
+alias venv="source $VENVDIR'/bin/activate'"
+```
 
 ### Download CECsi (with or without virtualenv)
 
 4. Download the code
-
-   cd $CECSI_DIR
-
-   git clone https://gitlab.com/tfitoussi/CECsi.git
+```bash
+cd $VENVDIR
+git clone https://gitlab.com/tfitoussi/CECsi.git
+```
 
 ### Finish to setup the virtualenv
 
 5. Add CECsi path to the virtualenv python path 
-
-   cd CECsi
-
-	pwd > ../lib/python2.7/site-packages/CECsi.pth 
+```bash
+cd CECsi
+pwd > ../lib/python2.7/site-packages/CECsi.pth 
+```
 
 6. Install python dependencies
-
-   make pip
+```bash
+make pip
+```
 
 ### Before launching any simulations (with or without virtualenv)
 
 7. Create needed directories
-
-   make initiate
+```bash
+make initiate
+```
 
 Congratulations! CECsi is now ready to use. 
 
